@@ -1,0 +1,2 @@
+
+module Mecha.Simple where
