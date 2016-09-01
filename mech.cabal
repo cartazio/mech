@@ -19,7 +19,7 @@ synopsis:            mecha are the most complex composite machines known to huma
 -- description:
 
 -- URL for the project homepage or repository.
-homepage:            http://github.com/cartazio/mecha
+homepage:            http://github.com/cartazio/mech
 
 -- The license under which the package is released.
 license:             BSD2
@@ -51,7 +51,7 @@ cabal-version:       >=1.10
 
 library
   -- Modules exported by the library.
-  exposed-modules:     Mecha, Mecha.Agent, Mecha.Simple
+  exposed-modules:     Mech, Mech.Agent, Mech.Simple
 
   -- Modules included in this library but not exported.
   -- other-modules:
@@ -62,6 +62,9 @@ library
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.9 && <4.10
                       ,machines
+                   --   ,bytestring
+                      ,profunctors
+
 
   -- Directories containing source files.
   hs-source-dirs:      src
