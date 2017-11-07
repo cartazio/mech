@@ -46,12 +46,15 @@ build-type:          Simple
 extra-source-files:  ChangeLog.md
 
 -- Constraint on the version of Cabal needed to build this package.
-cabal-version:       >=1.10
+cabal-version:       >=1.24
 
 
 library
   -- Modules exported by the library.
-  exposed-modules:     Mech, Mech.Agent, Mech.Simple
+  exposed-modules:    Mech
+                      ,Mech.Agent
+                      ,Mech.Simple
+                      ,Mech.Control.Applicative
 
   -- Modules included in this library but not exported.
   -- other-modules:
@@ -60,10 +63,12 @@ library
   -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.9 && <4.10
-                      ,machines
+  build-depends:       base >=4.9 && <4.11
+                      ,machines >= 0.6 && < 0.7
+                      ,semigroupoids >= 5.1 && < 5.2
                    --   ,bytestring
-                      ,profunctors
+                      ,profunctors >= 5.2 && < 5.3
+                      ,lens >= 4.15.1 && < 4.16
 
 
   -- Directories containing source files.

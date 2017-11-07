@@ -12,7 +12,6 @@ module Mech.Agent(
   ,type OUT
   ,ReversePolarity(..)
   ,MechStep(..)
-  ,simplePlansConstructSimpleMachine
   )
    where
 
@@ -33,7 +32,6 @@ import qualified Data.Machine.Type as MT
 import Data.Profunctor.Unsafe ((#.))
 
 data Polarity = IN | OUT
-
 
 --- these are just so that folks needed use datakinds unless they want to
 type IN = 'IN
