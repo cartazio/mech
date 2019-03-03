@@ -28,8 +28,8 @@ module Mech.Agent(
 
 
 import Prelude hiding ((.),id)
-import qualified Data.Machine.Type as MT
-import Data.Profunctor.Unsafe ((#.))
+--import qualified Data.Machine.Type as MT
+--import Data.Profunctor.Unsafe ((#.))
 
 data Polarity = IN | OUT
 
@@ -52,9 +52,9 @@ newtype AgenT {- k o m a -}
           (a -> m r) ->                                     -- Done a
           --(o -> m r -> m r) ->                              -- Yield o (Plan k o a)
           (forall g h. tx 'OUT  g h -> g  ->  ( h -> m r) -> m r -> m r) ->
-           -- ^ yield === transmit mode, addressing info, response/answer callback/continuation,  failure c
+           --  -- ^ yield === transmit mode, addressing info, response / answer callback/continuation,  failure c
           (forall g h. rx 'IN  g h  -> g  ->  ( h -> m r) -> m r -> m r) ->
-           -- ^  await ===  receive mode, receipt info, info callback/continuation,  failure c
+            -- --  ^  await ===  receive mode, receipt info, info callback/continuation,  failure c
           m r ->                                            -- Fail
           m r)
            } -> AgenT rx tx m a
