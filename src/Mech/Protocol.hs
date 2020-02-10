@@ -25,32 +25,34 @@ import Data.Proxy
 infixr 7 :+
 infixr 7 :*
 infixr 7 :^
-infixr 7 :|
+-- infixr 7 :|
 
--- We only allow negated normal form
+-- We only allow negated normal form, so negations are only on leaves
 data Formula  (t :: Type ) where
     (:+) ::  Formula t -> Formula t -> Formula t    -- ^ sum
     (:*) ::  Formula t -> Formula t -> Formula t   -- ^ product
-    (:|) ::  Formula t -> Formula t -> Formula t   -- ^ par (classical sum/or)
+    --(:|) ::  Formula t -> Formula t -> Formula t   -- ^ par (classical sum/or)
+    -- we treat negation on product as multiplicative inverse, so  not ( A:*B) == not A :* not B == A `Par` B
+    -- which collapes away Par.
     (:^) ::  Formula t -> Formula t -> Formula t  -- ^ choice / with
-    In   ::  t -> Formula t  -- positive position, ie "give"
-    Neg  ::  t -> Formula t -- negative postion, ie "receive"
+    In   ::  t -> Formula t  -- positive position, ie "give/Send"
+    Neg  ::  t -> Formula t -- negative postion, ie "take/Receive"
 type Neg = 'Neg  -- '
 type In = 'In  -- '
 type (:+) a b =  a ':+  b
 type (:*) a b =  a ':* b
-type (:|) a b =  a ':| b
+-- type (:|) a b =  a ':| b
 type (:^) a b =  a ':^  b
-type family Negate  (p :: Formula t ) :: Formula t where
-  Negate (In t) = 'Neg t
-  Negate (Neg t)= 'In t
-  Negate (x :* y) = Negate x ':| Negate y
-  Negate (x :+ y) = Negate x ':^ Negate y
-  Negate (x :^ y) = Negate x ':+ Negate y
-  Negate (x :| y) = Negate x ':* Negate y
+type family Negate  x   where
+  Negate ('In t) = 'Neg t
+  Negate ('Neg t)= 'In t
+  Negate (x ':* y) = Negate x ':* Negate y
+  Negate (x ':+ y) = Negate x ':^ Negate y
+  Negate (x ':^ y) = Negate x ':+ Negate y
 
-data TrivialCat :: Formula x -> Formula x -> *  where
-  TrivialCat :: ( a ~ Negate na , na ~ Negate a) => Proxy na -> Proxy  b -> TrivialCat a b
+
+data TrivialCat :: forall (x :: Type ) .  Formula x -> Formula x -> Type   where
+  TrivialCat :: forall a b  na .  ( a ~ Negate na , na ~ Negate a) => Proxy na -> Proxy  b -> TrivialCat a b
 
 
 --- | This probably is wrong for nested formulae, fix that
@@ -70,25 +72,34 @@ in Push land, we have  f -> g , f acts, , then g reacts, f then may resume
 in pull land, we have f -> g, g acts, then f reacts, then g may resumed
 
 -}
----
+
 data PureChoice :: (Formula Type )  -> Type -> Type  where
      Give :: x  -> PureChoice (In x) ()
-     Receive :: PureChoice (Neg x) c
-     SumGiveLeft :: x ->  PureChoice ( In x :+ y) ()
-     SumGiveRight :: y -> PureChoice (x :+  In y) ()
-     SumReceiveLeft :: PureChoice (Neg x :+ y) x
-     SumReceiveRight :: PureChoice (x :+ Neg y) y
+     Receive :: PureChoice (Neg x) x
+     SumLeftPrf :: x ->  PureChoice (In x) () ->  PureChoice ( In x :+ y) ()
+     SumLeftRft :: PureChoice (Neg x)  x ->  PureChoice ( Neg x :+  y) x
+     SumRight :: PureChoice (In y) yres -> PureChoice (x :+  In y) yres
+     PairBothPfPf  :: PureChoice (In x) xres -> PureChoice (In y) yres -> PureChoice (In x :*  In y) ()
 
 data HList :: [Type] -> Type where
    HNil :: HList '[]
    HCons :: forall (t :: Type) (ts :: [Type]) . t -> HList ts -> HList (t ': ts)
 
 data Mode = Act | React
+type Act = 'Act
+type React = 'React
 {-
 the acting/initiating side (ie upstream in push, downstream in pull)
   selects
 
 -}
+--data ProofT
+
+
+
+data TermT :: Formula Type -> Mode ->  (Type  -> Type) -> Type -> Type where
+
+
 data GForm :: Type -> Type where
     And :: forall (a :: Type ) . GForm a -> GForm a
 
