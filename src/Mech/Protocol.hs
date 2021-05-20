@@ -32,7 +32,7 @@ data Formula  (t :: Type ) where
     (:+) ::  Formula t -> Formula t -> Formula t    -- ^ sum
     (:*) ::  Formula t -> Formula t -> Formula t   -- ^ product
     --(:|) ::  Formula t -> Formula t -> Formula t   -- ^ par (classical sum/or)
-    -- we treat negation on product as multiplicative inverse, so  not ( A:*B) == not A :* not B == A `Par` B
+    -- we treat negation on products as multiplicative inverse, so  not ( A:*B) == not A :* not B == A `Par` B
     -- which collapes away Par.
     (:^) ::  Formula t -> Formula t -> Formula t  -- ^ choice / with
     In   ::  t -> Formula t  -- positive position, ie "give/Send"
